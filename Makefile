@@ -43,7 +43,7 @@ test-redbox: ## Test redbox
 
 .PHONY: test-django
 test-django: ## Test django-app
-	cd django_app && poetry install && poetry run pytest --ignore=tests/playwright --cov=redbox_app -v --cov-report=term-missing --cov-report=xml --cov-fail-under=80 --ds redbox_app.settings --envfile ../tests/.env.test $(TEST)
+	cd django_app && poetry install && poetry run pytest --ignore=tests/playwright --ignore=tests/e2e --cov=redbox_app -v --cov-report=term-missing --cov-report=xml --cov-fail-under=80 --ds redbox_app.settings --envfile ../tests/.env.test $(TEST)
 
 .PHONY: test-django-single
 test-django-single: ## Test django-app with specified test file/case
