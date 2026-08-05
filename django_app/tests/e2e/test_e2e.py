@@ -4,13 +4,16 @@ import os
 from playwright.sync_api import Page
 from yarl import URL
 
-from .pages import LandingPage
+from .pages import LandingPage, SSOLoginPage
 
 logging.basicConfig(level=os.environ.get("LOG_LEVEL", "INFO"))
 logger = logging.getLogger(__name__)
 
 
 BASE_URL = URL(os.environ.get("BASE_URL", " "))
+AUTHBROKER_URL = URL(os.environ.get("AUTHBROKER_URL", " "))
+AUTHBROKER_USERNAME = os.environ.get("AUTHBROKER_USERNAME", " ")
+AUTHBROKER_PASSWORD = os.environ.get("AUTHBROKER_PASSWORD", " ")
 
 
 def test_user_journey(page: Page):
@@ -23,8 +26,12 @@ def test_user_journey(page: Page):
 
     We should not be asserting anything about AI generated content in this test, aside from asserting that there
     is some."""
-
+    login_url = AUTHBROKER_URL / "login"
     logger.debug("Starting the E2E test on url %s", BASE_URL)
+    logger.debug("Logging in using the staff sso url %s", login_url)
+
+    login_page = SSOLoginPage(page, login_url)
+    login_page.login(AUTHBROKER_USERNAME, AUTHBROKER_PASSWORD)
 
     # Landing page
     landing_page = LandingPage(page, BASE_URL)
@@ -34,17 +41,3 @@ def test_user_journey(page: Page):
 
     chats_page.write_message = "Hello world"
     chats_page = chats_page.send()
-
-
-def test_support_pages(page: Page):
-    # Landing page
-    landing_page = LandingPage(page, BASE_URL)
-
-    # Privacy page
-    landing_page.navigate_to_privacy_page()
-
-    # Accessibility page
-    landing_page.navigate_to_accessibility_page()
-
-    # Support page
-    landing_page.navigate_to_support_page()

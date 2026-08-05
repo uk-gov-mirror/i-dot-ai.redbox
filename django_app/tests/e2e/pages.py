@@ -52,6 +52,19 @@ class BasePage(ABC):
         return f'"{self.title}" at {self.url}'
 
 
+class SSOLoginPage:
+    def __init__(self, page: Page, base_url: URL):
+        self.page = page
+        page.goto(str(base_url))
+
+    def login(self, username, password):
+        self.page.get_by_label("Email:").fill(username)
+
+        self.page.get_by_label("Password:").fill(password)
+
+        self.page.get_by_role("button").click()
+
+
 class SignedInBasePage(BasePage, ABC):
     def navigate_to_chats(self) -> "ChatsPage":
         self.page.get_by_role("link", name="Chats", exact=True).click()
